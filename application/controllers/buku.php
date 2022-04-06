@@ -8,7 +8,7 @@ class buku extends CI_Controller
         parent::__construct();
 
         if (!isset($this->session->userdata['username'])) {
-            $this->session->set_flashdata('pesan', '<div class="alert alert-warning alert-danger fade show " role="alert">
+            $this->session->set_flashdata('pesan', '<div class="alert alert-danger fade show " role="alert">
                       Mohon maaf, silahkan login terlebih dahulu
                       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                       </button>
@@ -40,7 +40,9 @@ class buku extends CI_Controller
 
     public function tambah_aksi()
     {
-        if ($this->input->post('kategori') != NULL || $this->input->post('isbn') != NULL || $this->input->post('lokasi') != NULL) {
+        $judul = $this->input->post('judul');
+
+        if ($this->input->post('kategori') != NULL || $this->input->post('lokasi') != NULL) {
 
             $image = $this->input->post('image');
             $image = str_replace('data:image/jpeg;base64,', '', $image);
@@ -58,10 +60,11 @@ class buku extends CI_Controller
                 'lokasi'        => $this->input->post('lokasi'),
                 'gambar'        => $filename,
             );
-        }
 
-        $res = $this->buku_model->insert($data);
-        echo json_encode($res);
+
+            $res = $this->buku_model->insert($data);
+            echo json_encode($res);
+        }
     }
 
     public function hapus($isbn)

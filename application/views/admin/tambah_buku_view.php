@@ -17,6 +17,16 @@
                             <h4 class="sub-title">Form tambah buku</h4>
                             <form id="tambah">
                                 <div class="modal-body">
+                                    <div class="form-group row ">
+                                        <label class="col-sm-3 col-form-label">Ambil Gambar Sampul</label>
+                                        <div class="col-sm-6 ">
+                                            <div class="text-center" id="my_camera"></div>
+                                            <input hidden type="text" name="image" id="img">
+                                            <button type="button" class=" btn btn-success" id="snap">Tangkap layar</button>
+                                            <button style="display: none;" type="button" class=" btn btn-danger" id="ulang">ambil ulang</button>
+                                            <small class="text-danger">*Usahakan gambar jelas dan tulisan terbaca</small>
+                                        </div>
+                                    </div>
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label">ISBN</label>
                                         <div class="col-sm-9">
@@ -59,12 +69,7 @@
                                             <input type="number" name="kuantitas" id="kuantitas" class="form-control" required>
                                         </div>
                                     </div>
-                                    <!-- <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label">Sampul</label>
-                                        <div class="col-sm-9">
-                                            <input type="file" name="sampul" class="form-control">
-                                        </div>
-                                    </div> -->
+
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label">Lokasi</label>
                                         <div class="col-sm-9">
@@ -77,13 +82,7 @@
                                             <small class="text-warning">A1 = (lemari/rak) </small>
                                         </div>
                                     </div>
-                                    <div class="form-group row ">
-                                        <label class="col-sm-3 col-form-label">Ambil Gambar Sampul</label>
-                                        <div class="col-sm-9 ">
-                                            <div class="text-center" id="my_camera"></div>
-                                            <small class="text-danger">*Usahakan gambar jelas dan tulisan terbaca</small>
-                                        </div>
-                                    </div>
+
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-primary">Tambah</button>
                                         <button type="reset" class="btn btn-danger">Reset data</button>
@@ -91,10 +90,6 @@
                                     <div class="form-group row justify-content-center ">
                                         <div class="col mt-1">
                                             <div id="response"></div>
-                                        </div>
-                                        <div class="col text-center">
-                                            <div id="result" class=" bg-light" style="border: honeydew;"></div>
-                                            <input hidden type="text" class="image">
                                         </div>
                                     </div>
                             </form>
@@ -114,26 +109,42 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.js"></script>
 <script language="JavaScript">
-    Webcam.set({
-        width: 480,
-        height: 360,
-        image_format: 'jpeg',
-        jpeg_quality: 90
-    });
-    Webcam.attach('#my_camera');
-</script>
+    function kameraPlay() {
+        Webcam.set({
+            width: 480,
+            height: 360,
+            image_format: 'jpeg',
+            jpeg_quality: 90
+        });
+        Webcam.attach('#my_camera');
+    }
+    kameraPlay();
 
-<!-- Code to handle taking the snapshot and displaying it locally -->
-<script type="text/javascript">
-    $('#tambah').on('submit', function(event) {
-
-
-        // Webcam.snap(function(data_uri) {
-        //     $(".image-tag").val(data_uri);
-        //     document.getElementById('result').innerHTML = '<img src="' + data_uri + '">';
-        // });
-
+    // untuk capture gambar
+    $('#snap').on('click', function(event) {
         event.preventDefault();
+        Webcam.snap(function(data_uri) {
+            image = data_uri;
+            $("#img").val(data_uri);
+            document.getElementById('my_camera').innerHTML = '<img id="ubah" src="' + data_uri + '">';
+            document.getElementById('snap').setAttribute('style', 'display:none;');
+            document.getElementById('ulang').setAttribute('style', '');
+        });
+    });
+
+    // untuk mengambil ulang gambar
+    $('#ulang').on('click', function(event) {
+        document.getElementById('img').value = '';
+
+        kameraPlay();
+
+        document.getElementById('snap').setAttribute('style', '');
+        document.getElementById('ulang').setAttribute('style', 'display:none;');
+    });
+
+    // untuk kirim data ke controller
+    $('#tambah').on('submit', function(e) {
+        e.preventDefault();
         var image = '';
         var isbn = $('#isbn').val();
         var kategori = $('#kategori').val();
@@ -142,12 +153,11 @@
         var tahun = $('#tahun').val();
         var kuantitas = $('#kuantitas').val();
         var lokasi = $('#lokasi').val();
+
         Webcam.snap(function(data_uri) {
             image = data_uri;
-            //untuk capture
-            $(".image").val(data_uri);
-            document.getElementById('result').innerHTML = '<img src="' + data_uri + '">';
         });
+
         $.ajax({
                 url: '<?php echo site_url("buku/tambah_aksi"); ?>',
                 type: 'POST',
@@ -166,9 +176,14 @@
 
             .done(function(data) {
                 if (data != 0) {
-                    // alert('insert data sukses');
-                    $("#response").html('<div class ="alert alert-success"><b>Berhasil disimpan !!</b> Sampul buku ' + judul + ' dan datanya. Silahkan cek di daftar buku</div>')
+                    console.log('berhasil');
+                    $("#response").html('<div class ="alert alert-success"><b>Berhasil disimpan !!</b> Sampul buku ' + judul + ' dan datanya. silahkan cek di daftar buku</div>')
                     $('#tambah')[0].reset();
+                    document.getElementById('ubah').innerHTML = '<div class="text-center" id="my_camera"></div>';
+                    document.getElementById('snap').setAttribute('style', '');
+                    document.getElementById('ulang').setAttribute('style', 'display:none;');
+
+                    kameraPlay();
                 }
             })
             .fail(function() {

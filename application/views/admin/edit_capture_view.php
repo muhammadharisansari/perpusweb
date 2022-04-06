@@ -129,11 +129,6 @@
     $('#tambah').on('submit', function(event) {
 
 
-        // Webcam.snap(function(data_uri) {
-        //     $(".image-tag").val(data_uri);
-        //     document.getElementById('result').innerHTML = '<img src="' + data_uri + '">';
-        // });
-
         event.preventDefault();
         var image = '';
         var galama = $('#galama').val();

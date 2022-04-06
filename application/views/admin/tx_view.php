@@ -88,6 +88,7 @@
                             <tr>
                                 <th>Sampul</th>
                                 <th>Judul</th>
+                                <th>isbn</th>
                                 <th>Kategori</th>
                                 <th>Penerbit</th>
                                 <th>Kuantitas</th>
@@ -99,6 +100,7 @@
                                 <tr>
                                     <td><img width="50%" src="<?= base_url() . 'assets/front/img/gallery/' . $b->gambar; ?>" alt=""> </td>
                                     <td><?= $b->judul; ?></td>
+                                    <td><?= $b->isbn; ?></td>
                                     <td><?= $b->kategori; ?></td>
                                     <td><?= $b->penerbit; ?></td>
                                     <td><?= $b->kuantitas; ?></td>
