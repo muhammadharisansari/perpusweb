@@ -9,82 +9,90 @@
                     </div>
                     <!-- Basic Form Inputs card start -->
                     <div class="card">
-                        <div class="card-header">
-                            <div class="row  justify-content-center ">
-                                <div class="col-8">
-                                    <h3>Daftar Buku</h3>
-                                </div>
-                                <div class="col-4">
-                                    <!-- tmbol tambah buku -->
-                                    <a href="buku/tambah_buku" class="btn btn-grd-info btn-round btn-block">
-                                        Tambah buku
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="card-block">
-                            <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="buku">
-                                    <thead>
-                                        <tr>
-                                            <th hidden>ISBN</th>
-                                            <th>Lokasi</th>
-                                            <th>Sampul</th>
-                                            <th>Judul</th>
-                                            <th>Kategori</th>
-                                            <th>Terbit</th>
-                                            <th>Penerbit</th>
-                                            <th>Status</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($buku as $b) : ?>
+                            <form action="<?= base_url(); ?>buku/deleteAll" enctype="application/x-www-form-urlencoded" method="post" accept-charset="utf-8">
+                                <div class="row  justify-content-center ">
+                                    <div class="col-8">
+                                        <h3>Daftar Buku</h3>
+                                    </div>
+                                    <div class="col-2">
+                                        <!-- tmbol hapus dipilih -->
+                                        <button type="submit" id="delAll" class="btn btn-grd-danger btn-round">
+                                            Hapus bertanda
+                                        </button>
+                                    </div>
+                                    <div class="col-2">
+                                        <!-- tmbol tambah buku -->
+                                        <a href="buku/tambah_buku" class="btn btn-grd-info btn-round btn-block">
+                                            Tambah buku
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover" id="buku">
+                                        <thead>
                                             <tr>
-                                                <td hidden><?= $b->isbn; ?></td>
-                                                <td><?= $b->lokasi; ?></td>
-                                                <td><img width="50%" src="<?= base_url() . 'assets/front/img/gallery/' . $b->gambar; ?>" alt=""> </td>
-                                                <td><?= $b->judul; ?></td>
-                                                <td><?= $b->kategori; ?></td>
-                                                <td><?= $b->tahun_terbit; ?></td>
-                                                <td><?= $b->penerbit; ?></td>
-                                                <td>
-                                                    <?php if ($b->kuantitas < 1) { ?>
-                                                        <p class="text-danger">Kosong</p>
-                                                    <?php } else { ?>
-                                                        <p class="text-success">Tersedia</p>
-                                                    <?php } ?>
-                                                </td>
-                                                <td>
-                                                    <div class="dropdown-info dropdown open">
-                                                        <button class="btn btn-info dropdown-toggle waves-effect waves-light " type="button" id="dropdown-4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Pilih</button>
-                                                        <div class="dropdown-menu" aria-labelledby="dropdown-4" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-
-                                                            <a class="dropdown-item waves-light waves-effect text-success" href="" data-toggle="modal" data-target="#detail<?= $b->isbn ?>">Detail</a>
-
-                                                            <a class="dropdown-item waves-light waves-effect text-primary" href="" data-toggle="modal" data-target="#edit<?= $b->isbn ?>">Edit</a>
-
-                                                            <a class="dropdown-item waves-light waves-effect text-danger" href="#" data-toggle="modal" data-target="#hapus<?= $b->isbn ?>">Hapus</a>
-                                                        </div>
-                                                    </div>
-                                                </td>
+                                                <th><input type="checkbox" onchange="checkAll(this)"></th>
+                                                <th hidden>ISBN</th>
+                                                <th>Lokasi</th>
+                                                <th>Sampul</th>
+                                                <th>Judul</th>
+                                                <th>Kategori</th>
+                                                <th>Terbit</th>
+                                                <th>Penerbit</th>
+                                                <th>Status</th>
+                                                <th>Aksi</th>
                                             </tr>
-                                        <?php endforeach; ?>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($buku as $b) : ?>
+                                                <tr>
+                                                    <td><input type="checkbox" name="dipilih[]" value="<?php echo $b->isbn; ?>"></td>
+                                                    <td hidden><?= $b->isbn; ?></td>
+                                                    <td><?= $b->lokasi; ?></td>
+                                                    <td><img width="50%" src="<?= base_url() . 'assets/front/img/gallery/' . $b->gambar; ?>" class="img-thumbnail"> </td>
+                                                    <td><?= $b->judul; ?></td>
+                                                    <td><?= $b->kategori; ?></td>
+                                                    <td><?= $b->tahun_terbit; ?></td>
+                                                    <td><?= $b->penerbit; ?></td>
+                                                    <td>
+                                                        <?php if ($b->kuantitas < 1) { ?>
+                                                            <p class="text-danger">Kosong</p>
+                                                        <?php } else { ?>
+                                                            <p class="text-success">Tersedia</p>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td>
+                                                        <div class="dropdown-info dropdown open">
+                                                            <button class="btn btn-info dropdown-toggle waves-effect waves-light " type="button" id="dropdown-4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Pilih</button>
+                                                            <div class="dropdown-menu" aria-labelledby="dropdown-4" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
 
-                                    </tbody>
-                                </table>
-                            </div>
+                                                                <a class="dropdown-item waves-light waves-effect text-success" href="" data-toggle="modal" data-target="#detail<?= $b->isbn ?>">Detail</a>
+
+                                                                <a class="dropdown-item waves-light waves-effect text-primary" href="" data-toggle="modal" data-target="#edit<?= $b->isbn ?>">Edit</a>
+
+                                                                <a class="dropdown-item waves-light waves-effect text-danger" href="#" data-toggle="modal" data-target="#hapus<?= $b->isbn ?>">Hapus</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+
+                                        </tbody>
+                                    </table>
+                            </form>
                         </div>
-
                     </div>
-                </div>
-                <!-- Basic Form Inputs card end -->
 
+                </div>
             </div>
+            <!-- Basic Form Inputs card end -->
+
         </div>
     </div>
-    <!-- Page body end -->
+</div>
+<!-- Page body end -->
 </div>
 
 <!-- Modal detail-->
@@ -317,91 +325,6 @@
     </div>
 <?php endforeach; ?>
 
-<!-- Modal tambah-->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Tambah data buku</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="<?= base_url('buku/tambah') ?>" method="post" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Kategori</label>
-                        <div class="col-sm-9">
-                            <select name="kat" id="kat" class="form-control" required>
-                                <option disabled selected>--pilih--</option>
-                                <?php foreach ($kat as $k) : ?>
-                                    <option value="<?= $k->kategori_buku; ?>"><?= $k->kategori_buku; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Judul buku</label>
-                        <div class="col-sm-9">
-                            <input type="text" name="judul" id="judul" class="form-control form-control-uppercase" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">ISBN</label>
-                        <div class="col-sm-9">
-                            <input type="number" name="isbn" id="isbn" class="form-control" required>
-                            <small class="text-danger">*bersifat permanen, tidak bisa diedit</small>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Penerbit</label>
-                        <div class="col-sm-9">
-                            <input type="text" name="penerbit" id="penerbit" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Tahun terbit</label>
-                        <div class="col-sm-9">
-                            <input type="number" name="tahun" id="tahun" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Kuantitas</label>
-                        <div class="col-sm-9">
-                            <input type="number" name="kuantitas" id="kuantitas" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Sampul</label>
-                        <div class="col-sm-9">
-                            <input type="file" name="sampul" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Lokasi</label>
-                        <div class="col-sm-9">
-                            <select name="lokasi" id="lokasi" class="form-control" required>
-                                <option disabled selected>--pilih--</option>
-                                <?php foreach ($rak as $r) : ?>
-                                    <option value="<?= $r->nomor_rak; ?>"><?= $r->nomor_rak; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <small class="text-warning">1A1 = (lemari/bagian/rak) -> A(atas), T(tengah), B(bawah)</small>
-                        </div>
-                    </div>
-                    <div class="form-group row justify-content-center">
-                        <div class="col-sm-9">
-                            <div class="col" id="my_camera"></div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Tambah</button>
-                    </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -413,4 +336,22 @@
             ]
         });
     });
+
+    function checkAll(box) {
+        let checkboxes = document.getElementsByTagName('input');
+        if (box.checked) { // jika checkbox teratar dipilih maka semua tag input juga dipilih
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].type == 'checkbox' && checkboxes[i].name == 'dipilih[]') {
+                    checkboxes[i].checked = true;
+                }
+            }
+        } else { // jika checkbox teratas tidak dipilih maka semua tag input juga tidak dipilih
+
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].type == 'checkbox') {
+                    checkboxes[i].checked = false;
+                }
+            }
+        }
+    }
 </script>

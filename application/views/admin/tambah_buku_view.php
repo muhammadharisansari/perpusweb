@@ -84,7 +84,7 @@
                                     </div>
 
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary">Tambah</button>
+                                        <button type="submit" style="display: none;" id="simpan" class="btn btn-primary">Tambah</button>
                                         <button type="reset" class="btn btn-danger">Reset data</button>
                                     </div>
                                     <div class="form-group row justify-content-center ">
@@ -129,6 +129,7 @@
             document.getElementById('my_camera').innerHTML = '<img id="ubah" src="' + data_uri + '">';
             document.getElementById('snap').setAttribute('style', 'display:none;');
             document.getElementById('ulang').setAttribute('style', '');
+            document.getElementById('simpan').setAttribute('style', '');
         });
     });
 
@@ -140,6 +141,7 @@
 
         document.getElementById('snap').setAttribute('style', '');
         document.getElementById('ulang').setAttribute('style', 'display:none;');
+        document.getElementById('simpan').setAttribute('style', 'display:none;');
     });
 
     // untuk kirim data ke controller
@@ -182,6 +184,7 @@
                     document.getElementById('ubah').innerHTML = '<div class="text-center" id="my_camera"></div>';
                     document.getElementById('snap').setAttribute('style', '');
                     document.getElementById('ulang').setAttribute('style', 'display:none;');
+                    document.getElementById('simpan').setAttribute('style', 'display:none;');
 
                     kameraPlay();
                 }

@@ -155,7 +155,7 @@ class buku extends CI_Controller
 
     public function edit_capture_aksi()
     {
-        if ($this->input->post('kategori') != NULL || $this->input->post('isbn') != NULL || $this->input->post('lokasi') != NULL) {
+        if ($this->input->post('kategori') != NULL || $this->input->post('lokasi') != NULL) {
 
             $galama = $this->input->post('galama');
             $hapus = 'assets/front/img/gallery/' . $galama;
@@ -183,5 +183,25 @@ class buku extends CI_Controller
 
         $res = $this->buku_model->update($isbn, $data);
         echo json_encode($res);
+    }
+
+    public function deleteAll()
+    {
+        $pilih = $this->input->post('dipilih');
+
+        if ($pilih == NULL) {
+            $this->session->set_flashdata('pesan', '<div class="alert alert-warning fade show " role="alert">
+            <strong>Tidak ada data yang dipilih</strong>
+                    </div>');
+            redirect('buku');
+        }
+
+        for ($i = 0; $i < sizeof($pilih); $i++) {
+            $this->db->where('isbn', $pilih[$i])->delete('buku');
+        }
+        $this->session->set_flashdata('pesan', '<div class="alert alert-success fade show " role="alert">
+            <strong>Data berhasil dihapus</strong>
+                    </div>');
+        redirect('buku');
     }
 }

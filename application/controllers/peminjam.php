@@ -107,7 +107,7 @@ class peminjam extends CI_Controller
         $this->transaksi_model->update_pinjam($id, $jumlah, 'peminjam');
         // penutup update total dipinjam
 
-        date_default_timezone_set('Asia/Singapore');
+        // date_default_timezone_set('Asia/Singapore'); sudah diatur di config.php
         $tanggal = date('d-m-Y / h:i:s a');
         //data buku
         $databuku = $this->transaksi_model->ambil_buku($isbn, 'buku')->row();
@@ -174,5 +174,32 @@ class peminjam extends CI_Controller
                       </button>
                     </div>');
         redirect('peminjam/transaksi/' . $id);
+    }
+
+    public function deleteAll()
+    {
+        $pilih = $this->input->post('dipilih');
+        if ($pilih == NULL) {
+            $this->session->set_flashdata('pesan', '<div class="alert alert-warning fade show " role="alert">
+            <strong>Tidak ada data yang dipilih</strong>
+                    </div>');
+            redirect('peminjam');
+        }
+
+        for ($i = 0; $i < sizeof($pilih); $i++) {
+            $this->db->where('id', $pilih[$i])->delete('peminjam');
+        }
+        $this->session->set_flashdata('pesan', '<div class="alert alert-success fade show " role="alert">
+            <strong>Data berhasil dihapus</strong>
+                    </div>');
+        redirect('peminjam');
+    }
+
+    public function importExcel()
+    {
+        $this->load->view('admin/header');
+        $this->load->view('admin/navbar');
+        $this->load->view('admin/i_excel_peminjam_view');
+        $this->load->view('admin/footer');
     }
 }
