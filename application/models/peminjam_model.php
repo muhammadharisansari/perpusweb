@@ -24,4 +24,22 @@ class peminjam_model extends CI_Model
         $this->db->where('id', $id);
         $this->db->delete('peminjam');
     }
+
+    public function insert_batch($data)
+    {
+        $this->db->insert_batch('peminjam', $data);
+        if ($this->db->affected_rows() > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public function list_peminjam()
+    {
+        $this->db->select('*');
+        $this->db->from('peminjam');
+        $query = $this->db->get();
+        return $query->result();
+    }
 }

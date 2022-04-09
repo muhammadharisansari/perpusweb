@@ -1,11 +1,19 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 
 class peminjam extends CI_Controller
 {
+
     function __construct()
     {
         parent::__construct();
+
+
 
         if (!isset($this->session->userdata['username'])) {
             $this->session->set_flashdata('pesan', '<div class="alert alert-warning alert-danger fade show " role="alert">
@@ -201,5 +209,98 @@ class peminjam extends CI_Controller
         $this->load->view('admin/navbar');
         $this->load->view('admin/i_excel_peminjam_view');
         $this->load->view('admin/footer');
+    }
+
+    public function dExcelFile()
+    {
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="Format data peminjam baru.xlsx"');
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'NAMA');
+        $sheet->setCellValue('B1', 'STATUS');
+        $sheet->setCellValue('C1', 'KETERANGAN');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save("php://output");
+    }
+
+    public function uploadFileExcel()
+    {
+        $file       = $_FILES['file']['name'];
+        $extension  = pathinfo($file, PATHINFO_EXTENSION);
+        if ($extension == 'csv') {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+        }
+        if ($extension == 'xls') {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+        } else {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        }
+
+        $spreadsheet    = $reader->load($_FILES['file']['tmp_name']);
+        $sheetdata      = $spreadsheet->getActiveSheet()->toArray();
+        $sheetcount     = count($sheetdata);
+        if ($sheetcount > 1) {
+            $data = [];
+            for ($i = 1; $i < $sheetcount; $i++) {
+                $nama           = $sheetdata[$i][0];
+                $status         = $sheetdata[$i][1];
+                $ket            = $sheetdata[$i][2];
+                $data[] = array(
+                    'nama'              => $nama,
+                    'status'            => $status,
+                    'ket'               => $ket
+                );
+            }
+            $cek = $this->peminjam_model->insert_batch($data);
+            if ($cek) {
+                $this->session->set_flashdata('pesan', '<div class="alert alert-success fade show " role="alert">
+            <strong>Data berhasil diimport</strong>
+                    </div>');
+                redirect('peminjam');
+            } else {
+                $this->session->set_flashdata('pesan', '<div class="alert alert-danger fade show " role="alert">
+            <strong>Data gagal diimport</strong>
+                    </div>');
+                redirect('peminjam');
+            }
+        }
+    }
+
+    public function exportDataExcel()
+    {
+        //fetch data
+        $listPeminjam = $this->peminjam_model->list_peminjam();
+        // foreach ($listPeminjam as $p) {
+        //     echo $p->nama .
+        //         '<br>';
+        //     echo $p->status .
+        //         '<br>';
+        //     echo $p->total_dipinjam .
+        //         '<br>';
+        //     echo $p->ket . '<br>';
+        // }
+        // exit();
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="Data peminjam perpus.xlsx"');
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'NAMA');
+        $sheet->setCellValue('B1', 'STATUS');
+        $sheet->setCellValue('C1', 'TOTAL DIPINJAM');
+        $sheet->setCellValue('D1', 'KETERANGAN');
+
+        $row = 2;
+        foreach ($listPeminjam as $p) {
+            $sheet->setCellValue('A' . $row, $p->nama);
+            $sheet->setCellValue('B' . $row, $p->status);
+            $sheet->setCellValue('C' . $row, $p->total_dipinjam);
+            $sheet->setCellValue('D' . $row, $p->ket);
+            $row++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save("php://output");
     }
 }
