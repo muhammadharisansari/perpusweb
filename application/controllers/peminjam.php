@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-require 'vendor/autoload.php';
+require FCPATH . 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -220,6 +220,10 @@ class peminjam extends CI_Controller
         $sheet->setCellValue('A1', 'NAMA');
         $sheet->setCellValue('B1', 'STATUS');
         $sheet->setCellValue('C1', 'KETERANGAN');
+        $sheet->setCellValue('D1', 'NOTE :');
+        $sheet->setCellValue('D2', 'jangan rubah format ini !!');
+        $sheet->setCellValue('D3', 'Status berisi antara : guru, siswa, lainnya');
+        $sheet->setCellValue('D4', 'Keterangan berisi penjelasan dari status. misalnya : kelas 1 / guru agama / dll');
 
         $writer = new Xlsx($spreadsheet);
         $writer->save("php://output");
@@ -272,16 +276,7 @@ class peminjam extends CI_Controller
     {
         //fetch data
         $listPeminjam = $this->peminjam_model->list_peminjam();
-        // foreach ($listPeminjam as $p) {
-        //     echo $p->nama .
-        //         '<br>';
-        //     echo $p->status .
-        //         '<br>';
-        //     echo $p->total_dipinjam .
-        //         '<br>';
-        //     echo $p->ket . '<br>';
-        // }
-        // exit();
+
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="Data peminjam perpus.xlsx"');
         $spreadsheet = new Spreadsheet();
